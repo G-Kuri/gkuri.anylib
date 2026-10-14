@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<setting>
+
+    <root>
+        <child>hello</child>
+    </root>
+
+    <number>123</number>
+
+    <bool>true</bool>
+
+    <text>sample</text>
+
+    <array>one</array>
+    <array>two</array>
+    <array>three</array>
+
+</setting>

@@ -1,0 +1,13 @@
+{
+  "root": {
+    "child": "hello"
+  },
+  "number": 123,
+  "bool": true,
+  "text": "sample",
+  "array": [
+    "one",
+    "two",
+    "three"
+  ]
+}
