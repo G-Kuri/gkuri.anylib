@@ -23,12 +23,15 @@ public class LRUCacheStore<T> extends CacheStore<T> {
 
 	@Override
 	protected void putData(CacheData<T> data) {
+		if(this.cacheDatas.get(data.getKey()) != null) return;
+		
 		if(this.capacity <= this.cacheDatas.size()) {
 			List<CacheData<?>> cleanupTargets = new ArrayList<>();
 			List<CacheData<T>> list = this.getSortedCacheDatasByCallsCurrentTimeMillis();
 			while (this.capacity <= list.size()) {
-				cleanupTargets.add(list.removeFirst());
-				this.remove(list.removeFirst().getKey());
+				CacheData<T> target = list.removeFirst();
+				cleanupTargets.add(target);
+				this.remove(target.getKey());
 			}
 			
 			for(CacheEventListener listener : cacheEventListeners) {

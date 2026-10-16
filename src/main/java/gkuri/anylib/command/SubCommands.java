@@ -2,9 +2,9 @@ package gkuri.anylib.command;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import gkuri.anylib.exception.command.CommandException;
 
@@ -16,7 +16,7 @@ public class SubCommands {
 	private boolean listenSubCommandsEvent = false;
 	
 	public SubCommands() {
-		subCommands = new HashMap<>();
+		subCommands = new ConcurrentHashMap<>();
 	}
 	
 	/**
@@ -26,6 +26,7 @@ public class SubCommands {
 	 */
 	public SubCommands addSubCommands(Command command) {
 		if(command == null) throw new NullPointerException();
+		if (command instanceof InteractiveCommand) throw new CommandException(14, command);
 		if(command.getName() == null || command.getName().isBlank()) throw new CommandException(2, command);
 		Command subcom = subCommands.get(command.getName());
 		if(subcom != null && subcom.getName().equals(command.getName())) throw new CommandException(1, command);
@@ -70,6 +71,10 @@ public class SubCommands {
 		return this.listenSubCommandsEvent;
 	}
 	
+	/**
+     * 現在登録されているサブコマンドをListで返します。
+     * @return
+     */
 	public List<Command> getSubCommandsList(){
 		List<Command> list = new ArrayList<Command>();
 		for(String key : this.subCommands.keySet()) {

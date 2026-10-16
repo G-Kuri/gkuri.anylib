@@ -16,6 +16,10 @@ public class CacheData<T> {
 		this.data = data;
 	}
 	
+	/**
+	 * 現在までに何回呼び出されたかを返します。
+	 * @return
+	 */
 	public long getCallsCount() {
 		return this.callsCount;
 	}
@@ -28,6 +32,10 @@ public class CacheData<T> {
 		this.callsCount++;
 	}
 	
+	/**
+	 * 最後に呼び出された時間を返します。
+	 * @return
+	 */
 	public long getCallsCurrentTimeMillis() {
 		return this.callsCurrentTimeMillis;
 	}
@@ -40,6 +48,10 @@ public class CacheData<T> {
 		this.callsCurrentTimeMillis = System.currentTimeMillis();
 	}
 	
+	/**
+	 * キャッシュデータが保存又は更新された時間を返します。
+	 * @return
+	 */
 	public long getCreateCurrentTimeMillis() {
 		return this.createCurrentTimeMillis;
 	}
@@ -48,6 +60,10 @@ public class CacheData<T> {
 		this.createCurrentTimeMillis = createCurrentTimeMillis;
 	}
 	
+	/**
+	 * このキャッシュデータに紐づくキーを返します。
+	 * @return
+	 */
 	public String getKey() {
 		return this.key;
 	}
@@ -56,6 +72,10 @@ public class CacheData<T> {
 		this.key = key;
 	}
 	
+	/**
+	 * キャッシュの実データを返します。
+	 * @return
+	 */
 	public T getData() {
 		return this.data;
 	}

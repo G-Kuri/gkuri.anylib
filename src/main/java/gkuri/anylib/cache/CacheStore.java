@@ -13,6 +13,12 @@ import gkuri.anylib.cache.events.CacheEventListener;
  * キャッシュストアの基底クラスです。
  * キャッシュ系のクラスを作成する際にextendsすれば各種基本メソッドを使用できます。
  * また、子クラスはputDataをOverrideしデータ追加時にデータのクリンナップを行ってください。
+ * 実際にデータが保存されるのは
+ * Map<String, CacheData<T>> cacheDatas
+ * です。
+ * イベントリスナは
+ * List<CacheEventListener> cacheEventListeners
+ * です。
  * @param <T>
  */
 public abstract class CacheStore<T> {
@@ -29,6 +35,11 @@ public abstract class CacheStore<T> {
 		this.cacheEventListeners = new CopyOnWriteArrayList<>();
 	}
 	
+	/**
+	 * データをキーに紐づけて保存又は更新します。
+	 * @param key
+	 * @param data
+	 */
 	public synchronized void put(String key, T data) {
 		CacheData<T> cacheData;
 		if((cacheData = this.cacheDatas.get(key)) != null) {
@@ -50,6 +61,10 @@ public abstract class CacheStore<T> {
 		}
 	}
 	
+	/**
+	 * キャッシュデータを手動で削除します。
+	 * @param key
+	 */
 	public synchronized void remove(String key) {
 		CacheData<T> cacheData = this.cacheDatas.remove(key);
 		if(cacheData != null) {
@@ -60,6 +75,9 @@ public abstract class CacheStore<T> {
 		}
 	} 
 	
+	/**
+	 * キャッシュに保存されたすべてのデータを削除します。
+	 */
 	public synchronized void clear() {
 		this.clearData();
 		this.cacheDatas.clear();
@@ -68,13 +86,20 @@ public abstract class CacheStore<T> {
 		}
 	}
 	
+	/**
+	 * キャッシュに保存されたデータを返します。
+	 * データが見つからない、又は無効になっている場合はNULLを返します。
+	 * @param key
+	 * @return
+	 */
 	public synchronized T get(String key){
 		CacheData<T> data = this.cacheDatas.get(key);
 		if(data == null) return null;
 		
-		data.incCallsCount();
-		data.setCallsCurrentTimeMillisNow();
 		if(this.getData(data)) {
+			data.incCallsCount();
+			data.setCallsCurrentTimeMillisNow();
+			
 			for(CacheEventListener listener : cacheEventListeners) {
 				listener.onGet(data);
 			}
@@ -83,21 +108,27 @@ public abstract class CacheStore<T> {
 		return null;
 	}
 	
+	/**
+	 * キャッシュに保存されたデータに紐づくキーの一覧を返します。
+	 * @return
+	 */
 	public Set<String> keySet(){
 		return this.cacheDatas.keySet();
 	}
 	
 	/**
-	 * putした際に呼ばれるので、必要に応じてcacheDatasから削除する処理を書く。
-	 * 呼び出しはデータをcacheDatasに保存する直前。
+	 * putした際に呼ばれるので、必要に応じてcacheDatasから削除する処理を書くことができます。
+	 * 呼び出しはデータをcacheDatasに保存する直前です。
 	 * @param data
 	 */
 	abstract protected void putData(CacheData<T> data);
 	
 	/**
-	 * getした際に呼ばれるので、何かしたければどうぞ。
-	 * 呼び出し回数と最終呼出時間の更新はCacheStoreで行うため不要。
-	 * falseを返すとgetの戻り値をNULLに変えられる。
+	 * getした際に呼ばれるので、何か実行したい処理がある場合はOverrideしてください。
+	 * 呼び出し回数と最終呼出時間の更新はCacheStoreで行うため不要です。
+	 * falseを返すとgetの戻り値を無効な値としてNULLに変えられますが、データは削除されないため
+	 * クリンナップする場合はその処理も記載してください。
+	 * また、getが呼ばれても対象のデータがなけれ呼び出されません。
 	 * @param data
 	 */
 	protected boolean getData(CacheData<T> data) {
@@ -105,8 +136,9 @@ public abstract class CacheStore<T> {
 	}
 	
 	/**
-	 * removeした際に呼ばれるので、何かしたければどうぞ。
-	 * 呼び出しはデータをcacheDatasから削除する直後。
+	 * removeした際に呼ばれるので、何か実行したい処理がある場合はOverrideしてください。
+	 * 呼び出しはデータをcacheDatasから削除された直後です。
+	 * また、removeが呼ばれても削除する対象のデータがなけれ呼び出されません。
 	 * @param data
 	 */
 	protected void removeData(CacheData<T> data) {
@@ -114,8 +146,8 @@ public abstract class CacheStore<T> {
 	}
 	
 	/**
-	 * clearした際に呼ばれるので、何かしたければどうぞ。
-	 * 呼び出しはcacheDatasをクリアする直前。
+	 * clearした際に呼ばれるので、何か実行したい処理がある場合はOverrideしてください。
+	 * 呼び出しはcacheDatasをクリアする直前です。
 	 * @param data
 	 */
 	protected void clearData() {

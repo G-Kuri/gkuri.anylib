@@ -28,10 +28,14 @@ public class TTLCacheStore<T> extends CacheStore<T> {
 	protected void putData(CacheData<T> data) {
 		List<CacheData<?>> cleanupTargets = new ArrayList<>();
 		List<CacheData<T>> list = this.getSortedCacheDatasByCallsCurrentTimeMillis();
-		if(this.capacity <= this.cacheDatas.size()) {
-			while (this.capacity <= list.size()) {
-				cleanupTargets.add(list.removeFirst());
-				this.remove(list.removeFirst().getKey());
+		
+		if(this.cacheDatas.get(data.getKey()) == null) {
+			if(this.capacity <= this.cacheDatas.size()) {
+				while (this.capacity <= list.size()) {
+					CacheData<T> target = list.removeFirst();
+					cleanupTargets.add(target);
+					this.remove(target.getKey());
+				}
 			}
 		}
 		

@@ -20,7 +20,7 @@ public class SettingProperties extends SettingFile {
 	
 	@Override
 	public void reload() throws IOException {
-		System.out.println(this.isResourcesFile);
+//		System.out.println(this.isResourcesFile);
 		if(!this.isResourcesFile && !this.tfo.canRead()) {
 			throw new IllegalAccessError(this.tfo.getAbsolutePath() + " is cannot read.");
 		}

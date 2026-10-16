@@ -107,6 +107,10 @@ public class CommandResult {
 		return this.status;	
 	}
 
+	/**
+	 * 対話モードへ移行する際にgetNewInteractiveInstance経由でCommandクラスへ渡されるデータを返します。
+	 * @return
+	 */
 	public Object getInteractiveData(){
 		return this.interactiveData;
 	}

@@ -140,7 +140,7 @@ public class CommandArgument {
 	}
 
 	/**
-	 * indexで指定された位置の引数をStringで
+	 * indexで指定された位置の引数をStringで返します。
 	 * @param index
 	 * @return
 	 */
@@ -148,6 +148,11 @@ public class CommandArgument {
 		return this.args.get(index).toString();
 	}
 
+	/**
+	 * indexで指定された位置の引数をIntegerで返します。
+	 * @param index
+	 * @return
+	 */
 	public Integer getArgInteger(int index){
 		if(getArgType(index) == Integer.class){
 			return (Integer) this.args.get(index);
@@ -155,6 +160,11 @@ public class CommandArgument {
 		throw new ClassCastException(getArgType(index).getSimpleName() + " is not Integer type.");
 	}
 
+	/**
+	 * indexで指定された位置の引数をBooleanで返します。
+	 * @param index
+	 * @return
+	 */
 	public Boolean getArgBoolean(int index){
 		if(getArgType(index) == Boolean.class){
 			return (Boolean) this.args.get(index);

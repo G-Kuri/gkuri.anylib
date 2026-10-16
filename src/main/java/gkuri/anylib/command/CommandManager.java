@@ -204,71 +204,145 @@ public class CommandManager {
 		this.interactiveCommands.remove(interactiveThreadId);
 	}
 
+	/**
+	 * 登録されているすべてのコマンドをString配列で返します。
+	 * ここにはサブコマンドが含まれません。
+	 * @return
+	 */
 	public String[] getAllCommands() {
 		List<String> list = new ArrayList<>(comList.keySet());
 		list.sort(String::compareTo);
 		return list.toArray(new String[0]);
 	}
 
+	/**
+	 * コマンド名に対応したCommandクラスのインスタンスを返します。
+	 * @param command
+	 * @return
+	 */
 	public Command getCommandClass(String command) {
 		if (this.comList.get(command) == null)
 			return null;
 		return comList.get(command);
 	}
 
+	/**
+	 * JVM全体で現在いくつ非同期実行コマンドのスレッドが走っているかを返します。
+	 * @return
+	 */
 	public static int getAllRunningAsyncCount() {
 		return ALL_RUNNING_ASYNC_COMMANDS.get();
 	}
 
+	/**
+	 * このCommandManagerインスタンスで現在いくつ非同期実行コマンドのスレッドが走っているかを返します。
+	 * @return
+	 */
 	public int getRunningAsyncCommandsCount() {
 		return runningAsyncCommandsCount.get();
 	}
 
+	/**
+	 * 保存されている履歴を返します。
+	 * historyコマンドが登録されていない場合は履歴が保存されないため、
+	 * 空のListが返ります。
+	 * @return
+	 */
 	synchronized public List<CommandArgument> getHistories() {
 		if (historyCommand == null)
 			return List.of();
 		return historyCommand.getHistories();
 	}
 
+	/**
+	 * このCommandManagerインスタンスは最大何スレッドまで
+	 * 非同期実行コマンドを同時に走らせることができるのかを返します。
+	 * @return
+	 */
 	public int getMaxRunningAsyncCommandsCount() {
 		return this.maxRunningAsyncCommandsCount.get();
 	}
 
+	/**
+	 * JVM全体で最大何スレッドまで
+	 * 非同期実行コマンドを同時に走らせることができるのかを返します。
+	 * @return
+	 */
 	public static int getAllMaxRunningAsyncCommandsCount() {
 		return ALL_MAX_RUNNING_ASYNC_COMMANDS_COUNT.get();
 	}
 
+	/**
+	 * このCommandManagerインスタンスは最大何スレッドまで
+	 * 非同期実行コマンドを同時に走らせることができるのかを設定します。
+	 * @return
+	 */
 	public void setMaxRunningAsyncCommandsCount(int maxRunningAsyncCommandsCount) {
 		if (0 < maxRunningAsyncCommandsCount
 				&& maxRunningAsyncCommandsCount <= ALL_MAX_RUNNING_ASYNC_COMMANDS_COUNT.intValue())
 			this.maxRunningAsyncCommandsCount.set(maxRunningAsyncCommandsCount);
 	}
 
+	/**
+	 * JVM全体で最大何スレッドまで
+	 * 非同期実行コマンドを同時に走らせることができるのかを設定します。
+	 * @return
+	 */
 	public static void setAllMaxRunningAsyncCommandsCount(int allMaxRunningAsyncCommandsCount) {
 		if (0 < allMaxRunningAsyncCommandsCount)
 			ALL_MAX_RUNNING_ASYNC_COMMANDS_COUNT.set(allMaxRunningAsyncCommandsCount);
 	}
 
+	/**
+	 * このCommandManagerインスタンスは現在新しい非同期実行コマンドの
+	 * スレッドを生成できるか否かを返します。
+	 * @return
+	 */
 	public boolean isInstanceBusy() {
 		return getMaxRunningAsyncCommandsCount() <= getRunningAsyncCommandsCount();
 	}
 
+	/**
+	 * JVM全体で現在新しい非同期実行コマンドの
+	 * スレッドを生成できるか否かを返します。
+	 * @return
+	 */
 	public static boolean isAllBusy() {
 		return getAllMaxRunningAsyncCommandsCount() <= getAllRunningAsyncCount();
 	}
 
+	/**
+	 * 現在入力中の文字列から、コマンド又は引数の補完候補を返します。
+	 * @param args
+	 * @return
+	 */
 	public CommandSuggestion[] getCommandSuggestions(String args) {
 		return this.getCommandSuggestions(new CommandArgument(args), false);
 	}
 
+	/**
+	 * 現在入力中の文字列から、次に入力されるコマンド又は引数の補完候補を返します。
+	 * @param args
+	 * @return
+	 */
 	public CommandSuggestion[] getNextCommandSuggestions(String args) {
 		return this.getCommandSuggestions(new CommandArgument(args), true);
 	}
 
+	/**
+	 * 現在入力中のCommandArgumentから、コマンド又は引数の補完候補を返します。
+	 * @param args
+	 * @return
+	 */
 	public CommandSuggestion[] getCommandSuggestions(CommandArgument args) {
 		return this.getCommandSuggestions(args, false);
 	}
 
+	/**
+	 * 現在入力中のCommandArgumentから、次に入力されるコマンド又は引数の補完候補を返します。
+	 * @param args
+	 * @return
+	 */
 	public CommandSuggestion[] getNextCommandSuggestions(CommandArgument args) {
 		return this.getCommandSuggestions(args, true);
 	}
@@ -351,7 +425,7 @@ public class CommandManager {
 	}
 
 	/**
-	 * 
+	 * CommandArgumentから実際にコマンドを実行し、その結果(CommandResult)を返します。
 	 * @param command
 	 * @return
 	 */
@@ -548,8 +622,8 @@ public class CommandManager {
 	}
 	
 	/**
-	 * executeCommandと同じ動作。
-	 * ただしこちらは非同期。
+	 * executeCommandと同じ動作をします。
+	 * ただしこちらは非同期で実行されます。
 	 * 
 	 * @param args
 	 * @return

@@ -99,7 +99,13 @@ public class SchedulerTime {
 		return this;
 	}
 	
-	public long getSpanMS(TimeSchedulerMode schedulerMode) {
+	/**
+	 * 暫定時間用。
+	 * @param schedulerMode
+	 * @return
+	 */
+	@Deprecated
+	protected long getSpanMS(TimeSchedulerMode schedulerMode) {
 		long result = this.milisec;
 		if(schedulerMode == TimeSchedulerMode.EVERY_SEC) {
 			return Math.max(result, 1);
